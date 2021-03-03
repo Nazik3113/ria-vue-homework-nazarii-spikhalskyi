@@ -5,8 +5,8 @@
       <hr>
       <AddUser/>
       <hr>
-      <p class="text-lg-left">Кількість користувачів: <b>0</b></p>
-      <UserList/>
+      <p class="text-lg-left">Кількість користувачів: <b>{{allUsers.length}}</b></p>
+      <UserList />
     </div>
   </div>
 </template>
@@ -14,17 +14,14 @@
 <script>
 import AddUser from "@/components/AddUser";
 import UserList from "@/components/UserList";
+import {mapGetters} from "vuex";
 export default {
   name: 'App',
   components: {
     AddUser,
     UserList
   },
-  data() {
-    return {
-      users: []
-    }
-  }
+  computed: mapGetters(['allUsers']),
 }
 </script>
 
