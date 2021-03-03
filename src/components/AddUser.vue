@@ -33,7 +33,7 @@
       </div>
       <br>
       <div class="col">
-        <button type="submit" :class="addUserClass" @click.prevent="addUserWithValidation({name, email, age})">Add User</button>
+        <button type="submit" :class="addUserClass" @click.prevent="addUserWithValidation({name: name.trim(), email: email.trim(), age})">Add User</button>
       </div>
     </form>
   </div>
@@ -59,15 +59,15 @@ export default {
     ...mapActions(['addUser', 'setError', 'unsetError']),
     validateName() {
       if (this.name.trim().length === 0) return false;
-      for (let letter of this.name.split('')) {
-        if (letter.toUpperCase() === letter.toLowerCase()) {
-          this.setError('The name should not contain numbers or symbols');
+      for (let letter of this.name.trim().split('')) {
+        if (letter.toUpperCase() === letter.toLowerCase() && letter !== ' ') {
+          this.setError('Name should not contain numbers or symbols');
           this.addUserClass = `${this.addUserClass} disabled`;
           return false;
         }
       }
       if (this.name.length > 20) {
-        this.setError('The name length should be less than 20');
+        this.setError('Name length should be less than 20');
         this.addUserClass = `${this.addUserClass} disabled`;
         return false;
       } else {
@@ -84,7 +84,7 @@ export default {
         this.addUserClass = 'btn btn-primary';
         return true;
       } else {
-        this.setError('The email is not valid');
+        this.setError('Email is not valid');
         this.addUserClass = `${this.addUserClass} disabled`;
         return false;
       }
@@ -92,20 +92,23 @@ export default {
     validateAge() {
       if (this.age.trim().length === 0) return false;
       if (+this.age > 150) {
-        this.setError('The age should be less than 150');
+        this.setError('Age should be less than 150');
         this.addUserClass = `${this.addUserClass} disabled`;
         return false;
       }
-      if (!Number.isNaN(+this.age)) {
-        this.unsetError();
-        this.addUserClass = 'btn btn-primary';
-        return true;
-      } else {
-        this.setError('The age should not contain nothing except numbers');
-        this.addUserClass = `${this.addUserClass} disabled`;
-        return false;
-
+      let res = true;
+      for (let number of this.age.split('')) {
+        if (!Number.isNaN(+this.age) && number !== '.') {
+          this.unsetError();
+          this.addUserClass = 'btn btn-primary';
+          res = true;
+        } else {
+          this.setError('Age should not contain nothing except numbers');
+          this.addUserClass = `${this.addUserClass} disabled`;
+          res = false;
+        }
       }
+      return res;
     },
     addUserWithValidation(user) {
       if (this.name.trim().length === 0 || this.email.trim().length === 0 || this.age === '') {
