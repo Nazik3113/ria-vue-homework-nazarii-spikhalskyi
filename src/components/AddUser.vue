@@ -42,6 +42,7 @@
 
 <script>
 import {mapActions, mapGetters} from 'vuex';
+import {validateName, validateEmail, validateAge} from '../validateFunctions';
 import Error from "@/components/Error";
 export default {
   name: "AddUser",
@@ -58,57 +59,13 @@ export default {
   methods: {
     ...mapActions(['addUser', 'setError', 'unsetError']),
     validateName() {
-      if (this.name.trim().length === 0) return false;
-      for (let letter of this.name.trim().split('')) {
-        if (letter.toUpperCase() === letter.toLowerCase() && letter !== ' ') {
-          this.setError('Name should not contain numbers or symbols');
-          this.addUserClass = `${this.addUserClass} disabled`;
-          return false;
-        }
-      }
-      if (this.name.length > 20) {
-        this.setError('Name length should be less than 20');
-        this.addUserClass = `${this.addUserClass} disabled`;
-        return false;
-      } else {
-        this.unsetError();
-        this.addUserClass = 'btn btn-primary';
-        return true;
-      }
+      return validateName(this.name, this.addUserClass, this.setError, this.unsetError);
     },
     validateEmail() {
-      if (this.email.trim().length === 0) return false;
-      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      if (re.test(String(this.email).toLowerCase())) {
-        this.unsetError();
-        this.addUserClass = 'btn btn-primary';
-        return true;
-      } else {
-        this.setError('Email is not valid');
-        this.addUserClass = `${this.addUserClass} disabled`;
-        return false;
-      }
+      return validateEmail(this.email, this.addUserClass, this.setError, this.unsetError);
     },
     validateAge() {
-      if (this.age.trim().length === 0) return false;
-      if (+this.age > 150) {
-        this.setError('Age should be less than 150');
-        this.addUserClass = `${this.addUserClass} disabled`;
-        return false;
-      }
-      let res = true;
-      for (let number of this.age.split('')) {
-        if (!Number.isNaN(+this.age) && number !== '.') {
-          this.unsetError();
-          this.addUserClass = 'btn btn-primary';
-          res = true;
-        } else {
-          this.setError('Age should not contain nothing except numbers');
-          this.addUserClass = `${this.addUserClass} disabled`;
-          res = false;
-        }
-      }
-      return res;
+      return validateAge(this.age, this.addUserClass, this.setError, this.unsetError);
     },
     addUserWithValidation(user) {
       if (this.name.trim().length === 0 || this.email.trim().length === 0 || this.age === '') {
